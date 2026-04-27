@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ultra Love Universe 3D</title>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #000, #0b0014);
+    font-family: Arial;
+    perspective: 1000px;
+}
+
+#startBtn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    padding: 18px 30px;
+    font-size: 18px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(45deg,#ff4d6d,#ffccff);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 30px pink;
+    z-index: 999;
+}
+
+.love {
+    position: absolute;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    transform-style: preserve-3d;
+    animation: float3D linear forwards;
+    text-shadow: 0 0 15px currentColor;
+}
+
+@keyframes float3D {
+    0% {
+        transform: translate3d(0,100vh,0) rotateX(0deg) scale(0.8);
+        opacity: 1;
+    }
+    100% {
+        transform: translate3d(0,-120vh,400px) rotateX(360deg) scale(1.8);
+        opacity: 0;
+    }
+}
+
+.heart {
+    position: absolute;
+    color: red;
+    animation: burst 3s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes burst {
+    0% {transform: scale(0.5); opacity: 1;}
+    100% {transform: scale(2.5) translateY(-200px); opacity: 0;}
+}
+
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 2s infinite alternate;
+}
+
+@keyframes twinkle {
+    from {opacity: 0.2;}
+    to {opacity: 1;}
+}
+
+#message {
+    position: absolute;
+    top: 40%;
+    width: 100%;
+    text-align: center;
+    font-size: 50px;
+    color: #ff4d6d;
+    opacity: 0;
+    transition: 1s;
+    text-shadow: 0 0 25px pink;
+}
+</style>
+</head>
+
+<body>
+
+<button id="startBtn">এই যে মেডাম এইখানে চাপ দেন ❤️</button>
+<div id="message">💖 I Love You Fariya 💖</div>
+
+<audio id="music" loop>
+<source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_6c6f5b6f6d.mp3?filename=romantic-piano-ambient-110895.mp3">
+</audio>
+
+<audio id="pop">
+<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5d4b1c3b35.mp3">
+</audio>
+
+<script>
+
+const colors = ["#ff4d6d","#ffcc00","#00ffff","#ff66ff","#00ff99","#ffffff"];
+
+/* stars */
+for(let i=0;i<120;i++){
+    let s=document.createElement("div");
+    s.className="star";
+    let size=Math.random()*3+1;
+    s.style.width=size+"px";
+    s.style.height=size+"px";
+    s.style.left=Math.random()*window.innerWidth+"px";
+    s.style.top=Math.random()*window.innerHeight+"px";
+    document.body.appendChild(s);
+}
+
+/* create love */
+function createLove(x=null,y=null){
+    let el=document.createElement("div");
+    el.className="love";
+
+    // 💖 NAME UPDATED HERE
+    el.innerText="I Love You Fariya 💖";
+
+    el.style.color=colors[Math.floor(Math.random()*colors.length)];
+    el.style.left=(x??Math.random()*window.innerWidth)+"px";
+    el.style.top=(y??window.innerHeight)+"px";
+    el.style.animationDuration=(Math.random()*3+3)+"s";
+
+    el.onclick=(e)=>{
+        e.stopPropagation();
+        document.getElementById("pop").play();
+
+        for(let i=0;i<18;i++){
+            createLove(
+                el.offsetLeft+Math.random()*120-60,
+                el.offsetTop+Math.random()*120-60
+            );
+        }
+        burst(el.offsetLeft,el.offsetTop);
+    };
+
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),7000);
+}
+
+/* heart burst */
+function burst(x,y){
+    for(let i=0;i<18;i++){
+        let h=document.createElement("div");
+        h.className="heart";
+        h.innerText="❤️";
+        h.style.left=x+"px";
+        h.style.top=y+"px";
+        h.style.fontSize=(10+Math.random()*25)+"px";
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(),3000);
+    }
+}
+
+/* message */
+function showMsg(){
+    let m=document.getElementById("message");
+    m.style.opacity=1;
+}
+
+/* start */
+document.getElementById("startBtn").onclick=()=>{
+    document.getElementById("startBtn").style.display="none";
+    document.getElementById("music").play().catch(()=>{});
+
+    showMsg();
+
+    setInterval(()=>{
+        for(let i=0;i<7;i++) createLove();
+    },250);
+};
+
+/* click explosion */
+document.body.onclick=(e)=>{
+    for(let i=0;i<10;i++){
+        createLove(e.clientX,e.clientY);
+    }
+};
+
+</script>
+
+</body>
+</html>
